@@ -3,6 +3,7 @@ package cabbage63.github.com.library;
 import android.content.Context;
 import android.content.res.TypedArray;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
@@ -10,18 +11,18 @@ import android.graphics.PorterDuff;
 import android.graphics.PorterDuffXfermode;
 import android.graphics.Rect;
 import android.graphics.Region;
+import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.text.TextPaint;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.View;
 import android.animation.ValueAnimator;
-import android.widget.TextView;
 
 /**
  * TODO: document your custom view class.
  */
-public class StripeTextView extends TextView {
+public class StripeTextView extends View {
     private String mExampleString; // TODO: use a default from R.string...
     private int mExampleColor = Color.RED; // TODO: use a default from R.color...
     private float mExampleDimension = 0; // TODO: use a default from R.dimen...
@@ -34,6 +35,9 @@ public class StripeTextView extends TextView {
     private boolean mIsVisible;
 
     private static final String TAG = StripeTextView.class.getSimpleName();
+
+    private Bitmap bitmap;
+    private double rate = 0.2;
 
     ValueAnimator animator;
     ValueAnimator.AnimatorUpdateListener listener = new ValueAnimator.AnimatorUpdateListener() {
@@ -96,6 +100,10 @@ public class StripeTextView extends TextView {
         animator = ValueAnimator.ofFloat(0.0f,1.0f);
         animator.addUpdateListener(listener);
         animator.setDuration(mDuration);
+
+        bitmap = ((BitmapDrawable)mExampleDrawable).getBitmap();
+        Log.v(TAG, "width:" + bitmap.getWidth());
+
     }
 
     public void show(){
@@ -121,8 +129,6 @@ public class StripeTextView extends TextView {
     protected void onDraw(Canvas canvas) {
         super.onDraw(canvas);
 
-        canvas.drawColor(Color.argb(255, 255, 0, 0));
-
         // TODO: consider storing these as member variables to reduce
         // allocations per draw cycle.
         int paddingLeft = getPaddingLeft();
@@ -130,47 +136,36 @@ public class StripeTextView extends TextView {
         int paddingRight = getPaddingRight();
         int paddingBottom = getPaddingBottom();
 
-        int contentWidth = getWidth() - paddingLeft - paddingRight;
-        int contentHeight = getHeight() - paddingTop - paddingBottom;
-
-        // Draw the text.
-        /*
-        canvas.drawText(mExampleString,
-                paddingLeft + (contentWidth - mTextWidth) / 2,
-                paddingTop + (contentHeight + mTextHeight) / 2,
-                mTextPaint);
-                */
+        int contentWidth = (int)(bitmap.getWidth() * rate);
+        int contentHeight = (int)(bitmap.getHeight() * rate);
 
         // Draw the example drawable on top of the text.
         if (mExampleDrawable != null) {
-            mExampleDrawable.setBounds(paddingLeft, paddingTop,
-                    paddingLeft + contentWidth, paddingTop + contentHeight);
+            mExampleDrawable.setBounds(0,0,contentWidth,contentHeight);
             mExampleDrawable.draw(canvas);
         }
 
-
-        canvas.drawText(mExampleString,
-                paddingLeft ,
-                paddingTop + (contentHeight + mTextHeight) /2,
-                mTextPaint);
-
-
         float animValue = (Float)(animator.getAnimatedValue());
-        float coordinateX = (animValue * mTextWidth) + paddingLeft;
+        float coordinateX = (animValue * contentWidth);
         Paint p = new Paint();
         p.setStrokeWidth(3);
         p.setColor(Color.BLACK);
         canvas.drawLine(coordinateX, 0, coordinateX, getHeight(), p);
-        Log.v(TAG, "mTextHeight" + mTextHeight + ", contentHeigt" + contentHeight);
+        Log.v(TAG, "contentWidth:" + contentWidth + "contentHeight" + contentHeight);
 
-        //masking
+        for(int y=0; y<contentHeight; y++){
+            int pixel = bitmap.getPixel((int)coordinateX,(int)(y/0.2));
+            p = new Paint();
+            p.setStrokeWidth(1);
 
-        Paint transparentPaint = new Paint();
-        transparentPaint.setColor(getResources().getColor(android.R.color.transparent));
-        transparentPaint.setXfermode(new PorterDuffXfermode(PorterDuff.Mode.CLEAR));
-        canvas.drawRect(paddingLeft, paddingTop + (contentHeight + mTextHeight) / 2 - getHeight(), coordinateX, paddingTop + (contentHeight + mTextHeight) /2 + mTextHeight,transparentPaint);
+            p.setColor(Color.argb(
+                    Color.alpha(pixel),
+                    0xFF - Color.red(pixel),
+                    0xFF - Color.green(pixel),
+                    0xFF - Color.blue(pixel)));
 
-
+            canvas.drawLine(coordinateX, y, getWidth(),y,p);
+        }
     }
 
     /**

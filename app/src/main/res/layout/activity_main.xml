@@ -24,7 +24,7 @@
         app:exampleDimension="24sp"
         app:exampleColor="#33b5e5"
         app:exampleString="Hello, StripeTextView"
-        app:exampleDrawable="@android:drawable/ic_menu_add"
+        app:exampleDrawable="@drawable/android"
         android:layout_below="@+id/textView"
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true"
