@@ -14,7 +14,9 @@
         android:layout_height="wrap_content"
         android:id="@+id/textView" />
 
-    <cabbage63.github.com.library.StripeTextView android:background="#ccc"
+    <cabbage63.github.com.library.StripeTextView
+        android:text="hoge"
+        android:background="#ccc"
         android:layout_width="match_parent"
         android:layout_height="300dp"
         android:paddingLeft="20dp"

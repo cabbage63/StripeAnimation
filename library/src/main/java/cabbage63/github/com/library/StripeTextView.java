@@ -2,20 +2,26 @@ package cabbage63.github.com.library;
 
 import android.content.Context;
 import android.content.res.TypedArray;
+import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
+import android.graphics.PorterDuff;
+import android.graphics.PorterDuffXfermode;
+import android.graphics.Rect;
+import android.graphics.Region;
 import android.graphics.drawable.Drawable;
 import android.text.TextPaint;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.View;
 import android.animation.ValueAnimator;
+import android.widget.TextView;
 
 /**
  * TODO: document your custom view class.
  */
-public class StripeTextView extends View {
+public class StripeTextView extends TextView {
     private String mExampleString; // TODO: use a default from R.string...
     private int mExampleColor = Color.RED; // TODO: use a default from R.color...
     private float mExampleDimension = 0; // TODO: use a default from R.dimen...
@@ -115,6 +121,8 @@ public class StripeTextView extends View {
     protected void onDraw(Canvas canvas) {
         super.onDraw(canvas);
 
+        canvas.drawColor(Color.argb(255, 255, 0, 0));
+
         // TODO: consider storing these as member variables to reduce
         // allocations per draw cycle.
         int paddingLeft = getPaddingLeft();
@@ -133,12 +141,6 @@ public class StripeTextView extends View {
                 mTextPaint);
                 */
 
-
-        canvas.drawText(mExampleString,
-                paddingLeft ,
-                paddingTop + (contentHeight + mTextHeight) /2,
-                mTextPaint);
-
         // Draw the example drawable on top of the text.
         if (mExampleDrawable != null) {
             mExampleDrawable.setBounds(paddingLeft, paddingTop,
@@ -146,13 +148,29 @@ public class StripeTextView extends View {
             mExampleDrawable.draw(canvas);
         }
 
+
+        canvas.drawText(mExampleString,
+                paddingLeft ,
+                paddingTop + (contentHeight + mTextHeight) /2,
+                mTextPaint);
+
+
         float animValue = (Float)(animator.getAnimatedValue());
         float coordinateX = (animValue * mTextWidth) + paddingLeft;
         Paint p = new Paint();
         p.setStrokeWidth(3);
         p.setColor(Color.BLACK);
         canvas.drawLine(coordinateX, 0, coordinateX, getHeight(), p);
-        Log.v(TAG,"onDraw" + animator.getAnimatedValue());
+        Log.v(TAG, "mTextHeight" + mTextHeight + ", contentHeigt" + contentHeight);
+
+        //masking
+
+        Paint transparentPaint = new Paint();
+        transparentPaint.setColor(getResources().getColor(android.R.color.transparent));
+        transparentPaint.setXfermode(new PorterDuffXfermode(PorterDuff.Mode.CLEAR));
+        canvas.drawRect(paddingLeft, paddingTop + (contentHeight + mTextHeight) / 2 - getHeight(), coordinateX, paddingTop + (contentHeight + mTextHeight) /2 + mTextHeight,transparentPaint);
+
+
     }
 
     /**
