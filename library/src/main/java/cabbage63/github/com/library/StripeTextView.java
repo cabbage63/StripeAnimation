@@ -8,7 +8,9 @@ import android.graphics.Paint;
 import android.graphics.drawable.Drawable;
 import android.text.TextPaint;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.View;
+import android.animation.ValueAnimator;
 
 /**
  * TODO: document your custom view class.
@@ -22,6 +24,19 @@ public class StripeTextView extends View {
     private TextPaint mTextPaint;
     private float mTextWidth;
     private float mTextHeight;
+    private int mDuration = 1500;
+    private boolean mIsVisible;
+
+    private static final String TAG = StripeTextView.class.getSimpleName();
+
+    ValueAnimator animator;
+    ValueAnimator.AnimatorUpdateListener listener = new ValueAnimator.AnimatorUpdateListener() {
+        @Override
+        public void onAnimationUpdate(ValueAnimator animation) {
+            //any process
+            invalidate();
+        }
+    };
 
     public StripeTextView(Context context) {
         super(context);
@@ -69,6 +84,22 @@ public class StripeTextView extends View {
 
         // Update TextPaint and text measurements from attributes
         invalidateTextPaintAndMeasurements();
+
+        //animation setting
+        this.mIsVisible = false;
+        animator = ValueAnimator.ofFloat(0.0f,1.0f);
+        animator.addUpdateListener(listener);
+        animator.setDuration(mDuration);
+    }
+
+    public void show(){
+        mIsVisible = true;
+        animator.start();
+    }
+
+    public void hide(){
+        mIsVisible = false;
+        animator.start();
     }
 
     private void invalidateTextPaintAndMeasurements() {
@@ -95,9 +126,17 @@ public class StripeTextView extends View {
         int contentHeight = getHeight() - paddingTop - paddingBottom;
 
         // Draw the text.
+        /*
         canvas.drawText(mExampleString,
                 paddingLeft + (contentWidth - mTextWidth) / 2,
                 paddingTop + (contentHeight + mTextHeight) / 2,
+                mTextPaint);
+                */
+
+
+        canvas.drawText(mExampleString,
+                paddingLeft ,
+                paddingTop + (contentHeight + mTextHeight) /2,
                 mTextPaint);
 
         // Draw the example drawable on top of the text.
@@ -106,6 +145,14 @@ public class StripeTextView extends View {
                     paddingLeft + contentWidth, paddingTop + contentHeight);
             mExampleDrawable.draw(canvas);
         }
+
+        float animValue = (Float)(animator.getAnimatedValue());
+        float coordinateX = (animValue * mTextWidth) + paddingLeft;
+        Paint p = new Paint();
+        p.setStrokeWidth(3);
+        p.setColor(Color.BLACK);
+        canvas.drawLine(coordinateX, 0, coordinateX, getHeight(), p);
+        Log.v(TAG,"onDraw" + animator.getAnimatedValue());
     }
 
     /**
@@ -185,5 +232,10 @@ public class StripeTextView extends View {
      */
     public void setExampleDrawable(Drawable exampleDrawable) {
         mExampleDrawable = exampleDrawable;
+    }
+
+    public void setDuration(int duration){
+        this.mDuration = duration;
+        animator.setDuration(duration);
     }
 }

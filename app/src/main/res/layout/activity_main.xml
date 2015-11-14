@@ -15,9 +15,38 @@
         android:id="@+id/textView" />
 
     <cabbage63.github.com.library.StripeTextView android:background="#ccc"
-        android:layout_width="300dp" android:layout_height="300dp" android:paddingLeft="20dp"
-        android:paddingBottom="40dp" app:exampleDimension="24sp" app:exampleColor="#33b5e5"
+        android:layout_width="match_parent"
+        android:layout_height="300dp"
+        android:paddingLeft="20dp"
+        android:paddingBottom="40dp"
+        app:exampleDimension="24sp"
+        app:exampleColor="#33b5e5"
         app:exampleString="Hello, StripeTextView"
-        app:exampleDrawable="@android:drawable/ic_menu_add" />
+        app:exampleDrawable="@android:drawable/ic_menu_add"
+        android:layout_below="@+id/textView"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:id="@+id/stripeTextView" />
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Show"
+        android:id="@+id/showButton"
+        android:layout_marginTop="36dp"
+        android:layout_below="@+id/stripeTextView"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true" />
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Hide"
+        android:id="@+id/hideButton"
+        android:layout_alignBottom="@+id/showButton"
+        android:layout_toRightOf="@+id/showButton"
+        android:layout_toEndOf="@+id/showButton"
+        android:layout_marginLeft="30dp"
+        android:layout_marginStart="30dp" />
 
 </RelativeLayout>
