@@ -97,21 +97,21 @@ public class StripeTextView extends View {
 
         //animation setting
         this.mIsVisible = false;
-        animator = ValueAnimator.ofFloat(0.0f,1.0f);
+        animator = ValueAnimator.ofFloat(0.0f, 1.0f);
         animator.addUpdateListener(listener);
         animator.setDuration(mDuration);
 
-        bitmap = ((BitmapDrawable)mExampleDrawable).getBitmap();
+        bitmap = ((BitmapDrawable) mExampleDrawable).getBitmap();
         Log.v(TAG, "width:" + bitmap.getWidth());
 
     }
 
-    public void show(){
+    public void show() {
         mIsVisible = true;
         animator.start();
     }
 
-    public void hide(){
+    public void hide() {
         mIsVisible = false;
         animator.start();
     }
@@ -136,36 +136,37 @@ public class StripeTextView extends View {
         int paddingRight = getPaddingRight();
         int paddingBottom = getPaddingBottom();
 
-        int contentWidth = (int)(bitmap.getWidth() * rate);
-        int contentHeight = (int)(bitmap.getHeight() * rate);
+        int contentWidth = (int) (bitmap.getWidth() * rate);
+        int contentHeight = (int) (bitmap.getHeight() * rate);
 
         // Draw the example drawable on top of the text.
         if (mExampleDrawable != null) {
-            mExampleDrawable.setBounds(0,0,contentWidth,contentHeight);
+            mExampleDrawable.setBounds(0, 0, contentWidth, contentHeight);
             mExampleDrawable.draw(canvas);
         }
 
-        float animValue = (Float)(animator.getAnimatedValue());
+        float animValue = (Float) (animator.getAnimatedValue());
         float coordinateX = (animValue * contentWidth);
         Paint p = new Paint();
         p.setStrokeWidth(3);
         p.setColor(Color.BLACK);
         canvas.drawLine(coordinateX, 0, coordinateX, getHeight(), p);
-        Log.v(TAG, "contentWidth:" + contentWidth + "contentHeight" + contentHeight);
 
-        for(int y=0; y<contentHeight; y++){
-            int pixel = bitmap.getPixel((int)coordinateX,(int)(y/0.2));
+        for (int y = 0; y < contentHeight; y++) {
+            int pixel = bitmap.getPixel((int) coordinateX, (int) (y / rate));
             p = new Paint();
             p.setStrokeWidth(1);
-
+            /*
             p.setColor(Color.argb(
                     Color.alpha(pixel),
                     0xFF - Color.red(pixel),
                     0xFF - Color.green(pixel),
                     0xFF - Color.blue(pixel)));
-
-            canvas.drawLine(coordinateX, y, getWidth(),y,p);
+                    */
+            p.setColor(pixel);
+            canvas.drawLine(coordinateX, y, getWidth(), y, p);
         }
+        Log.v(TAG, "X" + coordinateX + "/" + contentWidth);
     }
 
     /**
@@ -247,7 +248,7 @@ public class StripeTextView extends View {
         mExampleDrawable = exampleDrawable;
     }
 
-    public void setDuration(int duration){
+    public void setDuration(int duration) {
         this.mDuration = duration;
         animator.setDuration(duration);
     }
